@@ -21,6 +21,9 @@ func main() {
 
 	writer := io.MultiWriter(file, os.Stdout)
 
-	s := server.NewLTPServer("localhost:8080", writer, nil)
-	s.Start()
+	// s := server.NewLTPServer("localhost:8080", writer, nil)
+	// s.Start()
+
+	u := server.NewUDPServer("localhost:8080", writer, nil)
+	u.UDPStart()
 }

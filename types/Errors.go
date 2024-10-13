@@ -2,7 +2,7 @@ package types
 
 import "errors"
 
-type LTPError error
+type Errors error
 
 var ErrInvalidLogLevel = errors.New("invalid log level")
 var ErrInvalidResponseStatus = errors.New("invalid response status")

@@ -13,7 +13,7 @@ import (
 
 type LTPServer struct {
 	ListenAddr string
-	Format func(*types.LTPRequest) []byte
+	Format func(*types.Request) []byte
 	WriteStream io.Writer
 }
 
@@ -45,18 +45,18 @@ func (s *LTPServer) HandleNewMessage(conn net.Conn) {
 		return
 	}
 
-	req, status := conversion.BytesToLTPRequest(buf[:n])
+	req, status := conversion.BytesToRequest(buf[:n])
 	
 
 	if status != types.Success {
-		invalidRequest := types.LTPRequest{
+		invalidRequest := types.Request{
 			Message: "Invalid request: reason: " + status.String(),
 			Level: types.Error,
 			Save: false,
 		}
 		message := s.Format(&invalidRequest)
 		fmt.Println(string(message))
-		conn.Write(conversion.LTPResponseToBytes(&types.LTPResponse{
+		conn.Write(conversion.ResponseToBytes(&types.Response{
 			Message: status.String(),
 			Status: status,
 		}))
@@ -71,24 +71,24 @@ func (s *LTPServer) HandleNewMessage(conn net.Conn) {
 		fmt.Println(string(message))
 	}
 
-	res := types.LTPResponse{
+	res := types.Response{
 		Message: "Message received",
 		Status: types.Success,
 	}
 
-	conn.Write(conversion.LTPResponseToBytes(&res))
+	conn.Write(conversion.ResponseToBytes(&res))
 }
 
 func (s *LTPServer) WriteMessage(message []byte) (int, error) {
 	return s.WriteStream.Write(message)
 }
 
-func defaultFormat(req *types.LTPRequest) []byte{
+func defaultFormat(req *types.Request) []byte{
 	fullLog := time.Now().UTC().String() + " - " + string(req.Level) + " - " + req.Message + "\n"
 	return []byte(fullLog)
 }
 
-func NewLTPServer(listenAddr string, writeStream io.Writer, format func(*types.LTPRequest) []byte) *LTPServer {
+func NewLTPServer(listenAddr string, writeStream io.Writer, format func(*types.Request) []byte) *LTPServer {
 	if format == nil {
 		format = defaultFormat
 	}

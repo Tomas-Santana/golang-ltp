@@ -1,6 +1,6 @@
 package types
 
-type LTPResponse struct {
+type Response struct {
 	Message string
 	Status  ResponseStatus
 }

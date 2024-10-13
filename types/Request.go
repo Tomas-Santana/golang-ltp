@@ -1,6 +1,6 @@
 package types
 
-type LTPRequest struct {
+type Request struct {
 	Message string
 	Level  LogLevel
 	Save	bool
